@@ -52,7 +52,7 @@
 #include "stmlib/dsp/units.h"
 #include "stmlib/utils/gate_flags.h"
 
-#include "Accelerate/Accelerate.h"
+// #include "Accelerate/Accelerate.h"
 
 #include <time.h>
 #include <cstdlib>
@@ -635,14 +635,18 @@ void dsp_loop(t_myObj* self, double** ins, double** outs, long blockSize, long o
     if(self->clock_connected[0] && block->input_patched[0]) {
         vectorsum = 0.0;
         clock_input = ins[0]+offset;
-        vDSP_sveD(clock_input, 1, &vectorsum, size);
+        // vDSP_sveD(clock_input, 1, &vectorsum, size);
+        for(auto idx = 0; idx < size; ++idx)
+                vectorsum = vectorsum + clock_input[idx];
         if(vectorsum > 0.5) inClocks[0] = 255;
     }
     if(self->clock_connected[1] && block->input_patched[1]) {
         xy_clock_source = CLOCK_SOURCE_EXTERNAL;
         vectorsum = 0.0;
         clock_input = ins[ADC_CHANNEL_LAST+1]+offset;
-        vDSP_sveD(clock_input, 1, &vectorsum, size);
+        // vDSP_sveD(clock_input, 1, &vectorsum, size);
+        for(auto idx = 0; idx < size; ++idx)
+                vectorsum = vectorsum + clock_input[idx];
         if(vectorsum > 0.5) {
             inClocks[1] = 255;
             //object_post(NULL, "ping! - clockSrc: %d", xy_clock_source);

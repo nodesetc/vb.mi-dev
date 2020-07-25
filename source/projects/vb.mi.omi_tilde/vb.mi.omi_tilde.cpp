@@ -35,7 +35,7 @@
 
 #include "c74_msp.h"
 #include "omi/dsp/part.h"
-#include "Accelerate/Accelerate.h"
+// #include "Accelerate/Accelerate.h"
 
 
 using namespace c74::max;
@@ -254,7 +254,9 @@ void myObj_perform64(t_myObj* self, t_object* dsp64, double** ins, long numins, 
         
         if(self->gate_connected) {
             double trigger = 0.0;
-            vDSP_sveD(gate+count, 1, &trigger, size);   // calc sum of input vector
+            // vDSP_sveD(gate+count, 1, &trigger, size);   // calc sum of input vector
+            for(auto idx = count; idx < size; ++idx)
+                trigger = trigger + gate[idx];
             ps->gate |= trigger > 0.0;
         }
         

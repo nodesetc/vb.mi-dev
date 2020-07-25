@@ -38,7 +38,7 @@
 #include "elements/dsp/part.h"
 #include "read_inputs.hpp"
 
-#include "Accelerate/Accelerate.h"
+// #include "Accelerate/Accelerate.h"
 
 
 using namespace c74::max;
@@ -524,7 +524,9 @@ void myObj_perform64(t_myObj* self, t_object* dsp64, double** ins, long numins, 
         
         if(gate_connected) {        // check if gate signal is connected
             double trigger = 0.0;
-            vDSP_sveD(gate_in+count, 1, &trigger, size);   // calc sum of input block
+            // vDSP_sveD(gate_in+count, 1, &trigger, size);   // calc sum of input block
+            for(auto idx = count; idx < size; ++idx)
+                trigger = trigger + gate_in[idx];
             ps->gate |= trigger != 0.0;
         }
 

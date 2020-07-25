@@ -35,7 +35,7 @@
 #include "plaits/dsp/dsp.h"
 #include "plaits/dsp/voice.h"
 
-#include "Accelerate/Accelerate.h"
+// #include "Accelerate/Accelerate.h"
 
 
 
@@ -361,7 +361,9 @@ void myObj_perform64(t_myObj* self, t_object* dsp64, double** ins, long numins, 
             // calc sum of trigger input
             double vectorsum = 0.0;
             
-            vDSP_sveD(trig_input+count, 1, &vectorsum, size);
+            // vDSP_sveD(trig_input+count, 1, &vectorsum, size);
+            for(auto idx = count; idx < size; ++idx)
+                vectorsum = vectorsum + trig_input[idx];
             self->modulations.trigger = vectorsum;
         }
         

@@ -38,7 +38,7 @@
 #include "rings/dsp/string_synth_part.h"
 #include "rings/dsp/dsp.h"
 
-#include "Accelerate/Accelerate.h"
+// #include "Accelerate/Accelerate.h"
 
 
 using namespace c74::max;
@@ -359,7 +359,9 @@ void myObj_perform64(t_myObj* self, t_object* dsp64, double** ins, long numins, 
     // will not be used, if internal exciter is off
     // TODO: should we check for internal_exciter?
     if(self->strum_connected && !self->performance_state.internal_strum)
-        vDSP_sveD(strum, 1, &trigger, vs);  // calc sum of trigger input
+        // vDSP_sveD(strum, 1, &trigger, vs);  // calc sum of trigger input
+        for(auto idx = 0; idx < vs; ++idx)
+                trigger = trigger + strum[idx];
     
     cvinputs[16] = trigger;         // cvinputs[16] => ADC_CHANNEL_LAST,
     

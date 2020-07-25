@@ -42,7 +42,7 @@
 #include "braids/quantizer_scales.h"
 #include "braids/vco_jitter_source.h"
 
-#include "Accelerate/Accelerate.h"
+// #include "Accelerate/Accelerate.h"
 #include "samplerate.h"
 
 
@@ -405,7 +405,9 @@ void myObj_perform64(t_myObj* self, t_object* dsp64, double** ins, long numins, 
         // detect trigger
         if(trig_connected) {
             double sum = 0.0;
-            vDSP_sveD(trigger_cv+count, 1, &sum, kAudioBlockSize);
+            // vDSP_sveD(trigger_cv+count, 1, &sum, kAudioBlockSize);
+            for(auto idx = count; idx < kAudioBlockSize; ++idx)
+                sum = sum + trigger_cv[idx];
             bool trigger = sum != 0.0;
             trigger_flag |= (trigger && (!self->last_trig));
             self->last_trig = trigger;
@@ -420,12 +422,11 @@ void myObj_perform64(t_myObj* self, t_object* dsp64, double** ins, long numins, 
     }
     
     // copy and type cast output samples from 'float' to 'double'
-    vDSP_vspdp(samples, 1, outs[0], 1, vs);
-    /*
+    // vDSP_vspdp(samples, 1, outs[0], 1, vs);
     for(int i=0; i<vs; ++i) {
         // cast float data to double and output
         outs[0][i] = (double)samples[i];
-    }*/
+    }
     
     self->trigger_flag = trigger_flag;
     
@@ -511,7 +512,9 @@ void myObj_perform64_no_resamp(t_myObj* self, t_object* dsp64, double** ins, lon
         // detect trigger
         if(trig_connected) {
             double sum = 0.0;
-            vDSP_sveD(trigger_cv+count, 1, &sum, kAudioBlockSize);
+            // vDSP_sveD(trigger_cv+count, 1, &sum, kAudioBlockSize);
+            for(auto idx = count; idx < kAudioBlockSize; ++idx)
+                sum = sum + trigger_cv[idx];
             bool trigger = sum != 0.0;
             trigger_flag |= (trigger && (!self->last_trig));
             self->last_trig = trigger;
