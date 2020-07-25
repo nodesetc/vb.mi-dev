@@ -54,6 +54,8 @@
 
 #include "Accelerate/Accelerate.h"
 
+#include <time.h>
+#include <cstdlib>
 //#include <iostream>
 
 #define MAX_NOTE_SIZE 256
@@ -129,9 +131,11 @@ struct t_myObj {
 };
 
 unsigned long long rdtsc() {
-    unsigned int lo,hi;
-    __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
-    return ((unsigned long long)hi << 32) | lo;
+    // unsigned int lo,hi;
+    // __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
+    // return ((unsigned long long)hi << 32) | lo;
+    srand (time(NULL));
+    return ((unsigned long long)rand());
 }
 
 void Init(t_myObj *self)

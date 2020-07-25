@@ -152,9 +152,16 @@ inline double SoftClip(double x) {
       }
   }
   inline uint32_t ClipU16(int32_t x) {
-    uint32_t result;
-    __asm ("usat %0, %1, %2" : "=r" (result) :  "I" (16), "r" (x) );
-    return result;
+    // uint32_t result;
+    // __asm ("usat %0, %1, %2" : "=r" (result) :  "I" (16), "r" (x) );
+    // return result;
+      if (x < 0) {
+          return 0;
+      } else if (x > 65535) {
+          return 65535;
+      } else {
+          return x;
+      }
   }
 #endif
   

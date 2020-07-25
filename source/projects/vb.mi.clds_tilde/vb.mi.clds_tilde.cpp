@@ -38,7 +38,7 @@
 #include "clouds/dsp/mu_law.h"
 #include "clouds/dsp/sample_rate_converter.h"
 
-#include "Accelerate/Accelerate.h"
+// #include "Accelerate/Accelerate.h"
 
 // original sample rate is 32 kHz
 
@@ -380,7 +380,9 @@ void myObj_perform64(t_myObj* self, t_object* dsp64, double** ins, long numins, 
         // gate & trigger
         if(gate_connected) {
             double gate_sum = 0.0;
-            vDSP_sveD(gate_in+count, 1, &gate_sum, kAudioBlockSize);
+            // vDSP_sveD(gate_in+count, 1, &gate_sum, kAudioBlockSize);
+            for(auto idx = count; idx < kAudioBlockSize; ++idx)
+                gate_sum = gate_sum + gate_in[idx];
             p->freeze = (gate_sum != 0.0) || self->freeze;
         }
         else {
@@ -389,7 +391,9 @@ void myObj_perform64(t_myObj* self, t_object* dsp64, double** ins, long numins, 
         
         if(trig_connected) {
             double trig_sum = 0.0;
-            vDSP_sveD(trig_in+count, 1, &trig_sum, kAudioBlockSize);
+            // vDSP_sveD(trig_in+count, 1, &trig_sum, kAudioBlockSize);
+            for(auto idx = count; idx < kAudioBlockSize; ++idx)
+                trig_sum = trig_sum + trig_in[idx];
             bool trigger = trig_sum != 0.0;
             p->trigger = (trigger && !self->previous_trig);
             self->previous_trig = trigger;
@@ -499,8 +503,8 @@ void myObj_copyTo(t_myObj *self, t_symbol *name) {
         int8_t factor = clouds::kDownsamplingFactor;
         int32_t block_size = 4096;
         size_t upsampled_size = block_size * factor;
-        clouds::FloatFrame block[block_size];
-        clouds::FloatFrame block_out[upsampled_size];
+        clouds::FloatFrame* block = new clouds::FloatFrame[block_size];
+        clouds::FloatFrame* block_out = new clouds::FloatFrame[upsampled_size];
         
         if(size*factor > frames) {
             // make sure, our msp buffer is large enough
@@ -644,8 +648,8 @@ void myObj_copyFrom(t_myObj *self, t_symbol *name) {
         int8_t factor = clouds::kDownsamplingFactor;
         int32_t block_size = 4096;
         size_t downsampled_size = block_size / factor;
-        clouds::FloatFrame block[block_size];
-        clouds::FloatFrame block_out[downsampled_size];
+        clouds::FloatFrame* block = new clouds::FloatFrame[block_size];
+        clouds::FloatFrame* block_out = new clouds::FloatFrame[downsampled_size];
         
         // audio samples in internal buffer are downsampled
         // so we can fit in twice as many input samples
